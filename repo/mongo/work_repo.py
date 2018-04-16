@@ -6,4 +6,3 @@ class WorkRepo(mongo_repo.MongoRepo):
     def __init__(self, db):
         self.collenction = db[self.kind]
 
-    def
