@@ -1,6 +1,6 @@
 from domain import group
-from repo.mongo import mongo_repo
 from repo.mongo import errors
+from repo.mongo import mongo_repo
 
 
 class GroupRepo(mongo_repo.MongoRepo):
