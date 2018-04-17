@@ -1,5 +1,7 @@
+import typing
+
+from domain import error
 from domain import user
-from repo.mongo import errors
 from repo.mongo import mongo_repo
 
 
@@ -14,23 +16,23 @@ class UserRepo(mongo_repo.MongoRepo):
         self.collection = db[self.kind]
         self.user_group_dao = user_group_dao
 
-    def save(self, user):
+    def save(self, user: user.User):
         d = {self.ID: user.id,
              self.NAME: user.name}
 
         r = self.collection.insert_one(d)
         if not r.acknowledged:
-            raise errors.SaveError
+            raise error.PersistentException
 
-    def find(self, id_):
+    def find(self, id_: str) -> user.User:
         ret = self.collection.find_one({self.ID: id_})
         if ret is None:
-            raise errors.NotFound
+            raise error.NoSuchUser
 
         u = user.User(ret[self.ID], ret[self.NAME])
         return u
 
-    def find_all(self):
+    def find_all(self) -> typing.List[user.User]:
         res = self.collection.find()
         ret = []
         for x in res:
@@ -38,6 +40,6 @@ class UserRepo(mongo_repo.MongoRepo):
             ret.append(tmp)
         return ret
 
-    def group_ids(self, user):
+    def group_ids(self, user: user.User) -> typing.List[str]:
         ugs = self.user_group_dao.find_by_user_id(user.id)
         return [ug.group_id for ug in ugs]

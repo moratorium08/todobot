@@ -1,4 +1,5 @@
-from repo.mongo import errors
+import typing
+from domain import error
 
 
 class UserGroup:
@@ -18,10 +19,8 @@ class UserGroupDao:
     def __init__(self, db):
         self.collection = db[self.kind]
 
-    def find_by_user_id(self, uid: str) -> [UserGroup]:
+    def find_by_user_id(self, uid: str) -> typing.List[UserGroup]:
         rets = self.collection.find({self.USER_ID: uid})
-        if rets is None:
-            raise errors.NotFound
 
         ugs = []
         for ret in rets:
@@ -29,13 +28,20 @@ class UserGroupDao:
             ugs.append(ug)
         return ugs
 
-    def find_by_group_id(self, gid: str) -> [UserGroup]:
+    def find_by_group_id(self, gid: str) -> typing.List[UserGroup]:
         rets = self.collection.find({self.GROUP_ID: gid})
-        if rets is None:
-            raise errors.NotFound
 
         ugs = []
         for ret in rets:
             ug = UserGroup(ret[self.ID], ret[self.USER_ID], ret[self.GROUP_ID])
             ugs.append(ug)
         return ugs
+
+    def save(self, id_: str, uid: str, gid: str):
+        d = {self.ID: id_,
+             self.USER_ID: uid,
+             self.GROUP_ID: gid}
+
+        r = self.collection.insert_one(d)
+        if not r.acknowledged:
+            raise error.PersistentException

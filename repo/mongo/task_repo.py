@@ -1,5 +1,5 @@
+from domain import error
 from domain import task
-from repo.mongo import errors
 from repo.mongo import mongo_repo
 
 
@@ -28,4 +28,4 @@ class TaskRepo(mongo_repo.MongoRepo):
 
         r = self.collection.insert_one(d)
         if not r.acknowledged:
-            raise errors.SaveError
+            raise error.NoSuchTask

@@ -1,5 +1,9 @@
+import typing
+import uuid
+
+
+from domain import error
 from domain import group
-from repo.mongo import errors
 from repo.mongo import mongo_repo
 
 
@@ -16,12 +20,12 @@ class GroupRepo(mongo_repo.MongoRepo):
     def find(self, id_: str) -> group.Group:
         ret = self.collection.find_one({self.ID: id_})
         if ret is None:
-            raise errors.NotFound
+            raise error.NoSuchGroup
 
         g = group.Group(ret[self.ID], self.NAME)
         return g
 
-    def find_all(self) -> [group.Group]:
+    def find_all(self) -> typing.List[group.Group]:
         res = self.collection.find()
         ret = []
         for x in res:
@@ -34,8 +38,11 @@ class GroupRepo(mongo_repo.MongoRepo):
         r = self.collection.insert_one(d)
 
         if not r.acknowledged:
-            raise errors.SaveError
+            raise error.PersistentException
 
-    def user_ids(self, g: group.Group):
+    def add_user(self, g: group.Group, uid: str):
+        self.user_group_dao.save(uuid.uuid1().hex, uid, g.id)
+
+    def user_ids(self, g: group.Group) -> typing.List[str]:
         ugs = self.user_group_dao.find_by_group_id(g.id)
-        return [ug.user_ids for ug in ugs]
+        return [ug.user_id for ug in ugs]
