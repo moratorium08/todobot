@@ -1,8 +1,9 @@
 # coding: utf-8
 from datetime import datetime
 
+
 class Task:
-    def __init__(self, id_, content, limit):
+    def __init__(self, id_: str, content: str, limit: datetime):
         self.id = id_
         self.content = content
         self.limit = limit
@@ -11,5 +12,5 @@ class Task:
         ret = '{} を {} までに'
         return ret.format(self.content, self.get_str_limit())
 
-    def get_str_limit(self):
+    def get_str_limit(self) -> str:
         return self.limit.strftime("%Y/%m/%d %H:%M")

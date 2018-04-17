@@ -18,8 +18,19 @@ class UserGroupDao:
     def __init__(self, db):
         self.collection = db[self.kind]
 
-    def find_by_user_id(self, uid):
+    def find_by_user_id(self, uid: str) -> [UserGroup]:
         rets = self.collection.find({self.USER_ID: uid})
+        if rets is None:
+            raise errors.NotFound
+
+        ugs = []
+        for ret in rets:
+            ug = UserGroup(ret[self.ID], ret[self.USER_ID], ret[self.GROUP_ID])
+            ugs.append(ug)
+        return ugs
+
+    def find_by_group_id(self, gid: str) -> [UserGroup]:
+        rets = self.collection.find({self.GROUP_ID: gid})
         if rets is None:
             raise errors.NotFound
 

@@ -1,6 +1,5 @@
 from domain import user
 from repo.mongo import errors
-from repo.mongo import group_repo
 from repo.mongo import mongo_repo
 
 
@@ -32,13 +31,13 @@ class UserRepo(mongo_repo.MongoRepo):
         return u
 
     def find_all(self):
-        ret = self.collection.find()
-        l = []
-        for x in ret:
+        res = self.collection.find()
+        ret = []
+        for x in res:
             tmp = user.User(x[self.ID], x[self.NAME])
-            l.append(tmp)
-        return l
+            ret.append(tmp)
+        return ret
 
     def group_ids(self, user):
         ugs = self.user_group_dao.find_by_user_id(user.id)
-        return [ug.user_id for ug in ugs]
+        return [ug.group_id for ug in ugs]
