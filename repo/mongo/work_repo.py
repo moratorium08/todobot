@@ -5,5 +5,5 @@ class WorkRepo(mongo_repo.MongoRepo):
     kind = 'work'
 
     def __init__(self, db):
-        self.collenction = db[self.kind]
+        self.collection = db[self.kind]
 

@@ -10,10 +10,10 @@ class TaskRepo(mongo_repo.MongoRepo):
     LIMIT = 'limit'
 
     def __init__(self, db):
-        self.collenction = db[self.kind]
+        self.collection = db[self.kind]
 
     def find_all(self):
-        ret = self.collenction.find()
+        ret = self.collection.find()
         l = []
         for x in ret:
             tmp = task.Task(x[self.ID], x[self.CONTENT], x[self.LIMIT])
@@ -25,7 +25,7 @@ class TaskRepo(mongo_repo.MongoRepo):
              self.CONTENT: t.content,
              self.LIMIT: t.limit}
 
-        r = self.collenction.insert_one(d)
+        r = self.collection.insert_one(d)
         if not r.acknowledged:
             raise errors.SaveError
 

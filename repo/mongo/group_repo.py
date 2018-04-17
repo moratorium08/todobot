@@ -10,10 +10,10 @@ class GroupRepo(mongo_repo.MongoRepo):
     NAME = 'name'
 
     def __init__(self, db):
-        self.collenction = db[self.kind]
+        self.collection = db[self.kind]
 
     def find(self, id_):
-        ret = self.collenction.find_one({self.ID: id_})
+        ret = self.collection.find_one({self.ID: id_})
         if ret is None:
             raise errors.NotFound
 
@@ -22,7 +22,7 @@ class GroupRepo(mongo_repo.MongoRepo):
 
     def save(self, g):
         d = {self.ID: g.id, self.NAME: g.name}
-        r = self.collenction.insert_one(d)
+        r = self.collection.insert_one(d)
 
         if not r.acknowledged:
             raise errors.SaveError
