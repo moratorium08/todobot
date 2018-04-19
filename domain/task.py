@@ -9,8 +9,8 @@ class Task:
         self.limit = limit
 
     def __repr__(self):
-        ret = '{} を {} までに'
-        return ret.format(self.content, self.get_str_limit())
+        ret = '{}: {} を {} までに'
+        return ret.format(self.id, self.content, self.get_str_limit())
 
     def get_str_limit(self) -> str:
         return self.limit.strftime("%Y/%m/%d %H:%M")

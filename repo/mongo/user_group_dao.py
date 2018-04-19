@@ -1,5 +1,4 @@
 import typing
-from domain import error
 
 
 class UserGroup:
@@ -24,7 +23,9 @@ class UserGroupDao:
 
         ugs = []
         for ret in rets:
-            ug = UserGroup(ret[self.ID], ret[self.USER_ID], ret[self.GROUP_ID])
+            ug = UserGroup(ret[self.ID],
+                           ret[self.USER_ID],
+                           ret[self.GROUP_ID])
             ugs.append(ug)
         return ugs
 
@@ -33,7 +34,9 @@ class UserGroupDao:
 
         ugs = []
         for ret in rets:
-            ug = UserGroup(ret[self.ID], ret[self.USER_ID], ret[self.GROUP_ID])
+            ug = UserGroup(ret[self.ID],
+                           ret[self.USER_ID],
+                           ret[self.GROUP_ID])
             ugs.append(ug)
         return ugs
 
@@ -42,6 +45,6 @@ class UserGroupDao:
              self.USER_ID: uid,
              self.GROUP_ID: gid}
 
-        r = self.collection.insert_one(d)
-        if not r.acknowledged:
-            raise error.PersistentException
+        self.collection.find_one_and_update({self.ID: id_},
+                                            {'$set': d},
+                                            upsert=True)

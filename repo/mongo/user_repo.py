@@ -20,9 +20,9 @@ class UserRepo(mongo_repo.MongoRepo):
         d = {self.ID: user.id,
              self.NAME: user.name}
 
-        r = self.collection.insert_one(d)
-        if not r.acknowledged:
-            raise error.PersistentException
+        self.collection.find_one_and_update({self.ID: user.id},
+                                            {'$set': d},
+                                            upsert=True)
 
     def find(self, id_: str) -> user.User:
         ret = self.collection.find_one({self.ID: id_})

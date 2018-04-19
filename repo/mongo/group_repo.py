@@ -22,7 +22,7 @@ class GroupRepo(mongo_repo.MongoRepo):
         if ret is None:
             raise error.NoSuchGroup
 
-        g = group.Group(ret[self.ID], self.NAME)
+        g = group.Group(ret[self.ID], ret[self.NAME])
         return g
 
     def find_all(self) -> typing.List[group.Group]:
@@ -35,10 +35,9 @@ class GroupRepo(mongo_repo.MongoRepo):
 
     def save(self, g: group.Group):
         d = {self.ID: g.id, self.NAME: g.name}
-        r = self.collection.insert_one(d)
-
-        if not r.acknowledged:
-            raise error.PersistentException
+        self.collection.find_one_and_update({self.ID: g.id},
+                                            {'$set': d},
+                                            upsert=True)
 
     def add_user(self, g: group.Group, uid: str):
         self.user_group_dao.save(uuid.uuid1().hex, uid, g.id)

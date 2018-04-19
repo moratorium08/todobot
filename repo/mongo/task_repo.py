@@ -26,6 +26,14 @@ class TaskRepo(mongo_repo.MongoRepo):
              self.CONTENT: t.content,
              self.LIMIT: t.limit}
 
-        r = self.collection.insert_one(d)
-        if not r.acknowledged:
+        self.collection.find_one_and_update({self.ID: t.id},
+                                            {'$set': d},
+                                            upsert=True)
+
+    def find(self, tid: str) -> task.Task:
+        ret = self.collection.find_one({self.ID: tid})
+        if ret is None:
             raise error.NoSuchTask
+
+        g = task.Task(ret[self.ID], ret[self.CONTENT], ret[self.LIMIT])
+        return g
